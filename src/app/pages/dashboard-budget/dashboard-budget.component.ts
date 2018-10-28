@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild, EventEmitter, Input, TemplateRef } from '@angular/core';
-import { DecimalPipe, formatNumber } from '@angular/common';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { formatNumber } from '@angular/common';
 
 
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 
 import { NbShowcaseDialogComponent } from '../../@core/utils/confirm.dialog';
-import { NbDialogRef, NbDialogService  } from '@nebular/theme';
+import { NbDialogService  } from '@nebular/theme';
 
 import { BudgetmonthService } from '../../@core/data/budget-month.service';
 import { BudgetMonth } from '../../@core/data/models/budget-month.models';
@@ -141,15 +141,15 @@ export class DashboardBudgetComponent implements OnInit {
 
 
       this.formAdd = this.fb.group({
-          date: ['',Validators.required],
-          payee: ['',Validators.required],
+          date: ['', Validators.required],
+          payee: ['', Validators.required],
           desc: [''],
-          amount: ['',Validators.required],
-          type: ['',Validators.required],
+          amount: ['', Validators.required],
+          type: ['', Validators.required],
           addCategoryTransferTo: [''],
-          category_id: ['',Validators.required],
-          user_id: ['3',Validators.required],
-          budget_month_id: ['',Validators.required],
+          category_id: ['', Validators.required],
+          user_id: ['3', Validators.required],
+          budget_month_id: ['', Validators.required],
           transaction_id: [''],
       });
 
@@ -169,7 +169,7 @@ export class DashboardBudgetComponent implements OnInit {
         let filterDesc = this.filterDesc;
         let filterBudgetType = this.filterBudgetType;
         let tempData = this.allRows;
-        let keys = Object.keys(tempData[0]);
+        //let keys = Object.keys(tempData[0]);
         this.rows = tempData.filter(function(item){
             let bConditionDesc = false;
             if (item['payee'].toString().toLowerCase().indexOf(filterDesc) !== -1 || item['desc'].toString().toLowerCase().indexOf(filterDesc) !== -1 || !filterDesc){
@@ -422,7 +422,7 @@ export class DashboardBudgetComponent implements OnInit {
     clickDelete(transactionId){
       this.dialogService.open(NbShowcaseDialogComponent, {
           closeOnBackdropClick: false,
-          context:{
+          context: {
               title: 'Delete Transaction',
               message: 'Confirm delete this transaction?',
           }
