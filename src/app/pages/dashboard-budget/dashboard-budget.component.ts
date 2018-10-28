@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild, EventEmitter,Input, TemplateRef   } from '@angular/core';
+import { Component, OnInit, ViewChild, EventEmitter, Input, TemplateRef } from '@angular/core';
 import { DecimalPipe, formatNumber } from '@angular/common';
 
 
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 
-import { NbShowcaseDialogComponent } from '../../@core/utils/confirm.dialog'
+import { NbShowcaseDialogComponent } from '../../@core/utils/confirm.dialog';
 import { NbDialogRef, NbDialogService  } from '@nebular/theme';
 
 import { BudgetmonthService } from '../../@core/data/budget-month.service';
@@ -34,7 +34,7 @@ declare var $: any;
   selector: 'ngx-dashboard-budget',
   templateUrl: './dashboard-budget.component.html',
   styleUrls: ['./dashboard-budget.component.scss'],
-  providers: [BudgetmonthService,CategoryService,SharedService]
+  providers: [ BudgetmonthService, CategoryService, SharedService ]
 })
 export class DashboardBudgetComponent implements OnInit {
 
@@ -50,20 +50,20 @@ export class DashboardBudgetComponent implements OnInit {
               private budgetTypeService: BudgetTypeService,
               private sanitizer: DomSanitizer) { }
 
-    budgetMonthSelected : BudgetMonth;
-    budgetMonthLatest : BudgetMonth;
-    budgetMonthList : BudgetMonth[];
+    budgetMonthSelected: BudgetMonth;
+    budgetMonthLatest: BudgetMonth;
+    budgetMonthList: BudgetMonth[];
     category: Category;
     categoryList: Category[];
-    budgetTypeList : BudgetType[];
+    budgetTypeList: BudgetType[];
     transactionList: Transaction[];
 
     filterBudgetType: string;
     filterBudgetMonthId: number;
     filterDesc: string;
 
-    categoryAmountLeft : CategoryAmount<number> = {};
-    categoryAmountTotal : CategoryAmount<number> = {};
+    categoryAmountLeft: CategoryAmount<number> = {};
+    categoryAmountTotal: CategoryAmount<number> = {};
 
     totalBalanceStart: number = 0;
     totalBalancePeriod: number = 0;
@@ -78,13 +78,13 @@ export class DashboardBudgetComponent implements OnInit {
     totalGas: number = 0;
     totalToll: number = 0;
 
-    addDate: string = "";
-    addPayee: string = "";
-    addDescription: string = "";
-    addAmount: string = "";
-    addBudgetType: string = "";
-    addCategoryTransferTo: string = "";
-    addCategory: string = "";
+    addDate: string = '';
+    addPayee: string = '';
+    addDescription: string = '';
+    addAmount: string = '';
+    addBudgetType: string = '';
+    addCategoryTransferTo: string = '';
+    addCategory: string = '';
 
 
 
@@ -118,25 +118,25 @@ export class DashboardBudgetComponent implements OnInit {
       this.budgetMonthService.getBudgetMonths(3)
           .subscribe(budgetMonthList => {
               this.budgetMonthList = budgetMonthList;
-          })
+          });
 
       this.budgetMonthService.getBudgetMonthsLatest(3)
           .subscribe(budgetMonthLatest => {
               this.budgetMonthLatest = budgetMonthLatest;
               this.budgetMonthSelected = budgetMonthLatest;
-              this.dateMin = new Date(this.budgetMonthSelected.year, this.budgetMonthSelected.month-1, 1);
+              this.dateMin = new Date(this.budgetMonthSelected.year, this.budgetMonthSelected.month - 1, 1);
               this.dateMax = new Date(this.budgetMonthSelected.year, this.budgetMonthSelected.month, 0);
 
               this.filterBudgetMonthId = budgetMonthLatest.id;
               this.getBudget(this.filterBudgetMonthId);
               this.formAdd.controls['budget_month_id'].setValue(this.filterBudgetMonthId);
-          })
+          });
 
       this.ss.getBudgetLoad().subscribe(res => {
-          if (this.loadBudgetTrack == 0){
+          if (this.loadBudgetTrack === 0){
               this.filterSearch();
           }
-      })
+      });
 
 
 
@@ -160,8 +160,8 @@ export class DashboardBudgetComponent implements OnInit {
    }
 
     clickClear(){
-        this.filterDesc = "";
-        this.filterBudgetType = "";
+        this.filterDesc = '';
+        this.filterBudgetType = '';
         this.filterSearch();
     }
 
@@ -186,41 +186,41 @@ export class DashboardBudgetComponent implements OnInit {
             }
 
 
-        })
+        });
 
-        let arrayOfKeys = Object.keys(this.categoryAmountTotal);
-        arrayOfKeys.forEach(key=>{
+        const arrayOfKeys = Object.keys(this.categoryAmountTotal);
+        arrayOfKeys.forEach(key=> {
             this.categoryAmountTotal[key] = 0;
-        })
+        });
         this.totalIncome = 0;
         this.totalSpending = 0;
         this.totalTransfer = 0;
 
         this.rows.forEach(transaction => {
-            if (transaction.type == 'debit') {
+            if (transaction.type === 'debit') {
                 this.categoryAmountTotal[transaction.category.name] -= transaction.amount;
                 this.totalSpending -= transaction.amount;
             }
 
-            if (transaction.type == 'credit') {
+            if (transaction.type === 'credit') {
                 this.categoryAmountTotal[transaction.category.name] += transaction.amount;
                 this.totalIncome += transaction.amount;
             }
 
-            if (transaction.type == 'transferin') {
+            if (transaction.type === 'transferin') {
                 this.totalTransfer += transaction.amount;
             }
 
-            if (transaction.type == 'transferout') {
+            if (transaction.type === 'transferout') {
                 this.totalTransfer -= transaction.amount;
             }
-        })
+        });
 
         this.table.offset = 0;
     }
 
     changeDesc(event){
-        let val = event.target.value.toLowerCase();
+        const val = event.target.value.toLowerCase();
         this.filterDesc = val;
         this.filterSearch();
     }
@@ -254,10 +254,10 @@ export class DashboardBudgetComponent implements OnInit {
             .subscribe(budgetMonth => {
                 this.budgetMonthSelected = budgetMonth;
                 console.log('selected budget month', this.budgetMonthSelected);
-                this.dateMin = new Date(this.budgetMonthSelected.year, this.budgetMonthSelected.month-1, 1);
+                this.dateMin = new Date(this.budgetMonthSelected.year, this.budgetMonthSelected.month - 1, 1);
                 this.dateMax = new Date(this.budgetMonthSelected.year, this.budgetMonthSelected.month, 0);
 
-            })
+            });
 
        this.categoryService.getCategory(3, budgetMonthID).subscribe(category => {
            this.categoryList = category;
@@ -270,13 +270,13 @@ export class DashboardBudgetComponent implements OnInit {
                this.transactionService.getTransactions(3, budgetMonthID, category.id).subscribe(transaction => {
                    this.rows = this.allRows = this.rows.concat(transaction);
                    transaction.forEach(transaction => {
-                       if (transaction.type == 'debit' || transaction.type == 'transferout') {
+                       if (transaction.type === 'debit' || transaction.type === 'transferout') {
                            this.categoryAmountLeft[category.name] -= transaction.amount;
                            this.totalBalancePeriod -= transaction.amount;
                            this.totalBalanceEnd -= transaction.amount;
-                           this.categoryAmountTotal[category.name] -= transaction.type == 'debit' ? transaction.amount : 0;
-                           this.totalSpending -= transaction.type == 'debit' ? transaction.amount : 0;
-                           this.totalTransfer -= transaction.type == 'transferout' ? transaction.amount : 0;
+                           this.categoryAmountTotal[category.name] -= transaction.type === 'debit' ? transaction.amount : 0;
+                           this.totalSpending -= transaction.type === 'debit' ? transaction.amount : 0;
+                           this.totalTransfer -= transaction.type === 'transferout' ? transaction.amount : 0;
 
                            this.totalMeals -= (transaction['payee'].toLowerCase().indexOf('meals') !== -1 || transaction['desc'].toLowerCase().indexOf('meals')) !== -1 ? transaction.amount : 0;
                            this.totalGroceries -= (transaction['payee'].toLowerCase().indexOf('groceries') !== -1 || transaction['desc'].toLowerCase().indexOf('groceries')) !== -1 ? transaction.amount : 0;
@@ -284,24 +284,24 @@ export class DashboardBudgetComponent implements OnInit {
                            this.totalToll -= (transaction['payee'].toLowerCase().indexOf('citylink') !== -1 || transaction['desc'].toLowerCase().indexOf('citylink')) !== -1 ? transaction.amount : 0;
                        }
 
-                       if (transaction.type == 'credit' || transaction.type == 'transferin') {
+                       if (transaction.type === 'credit' || transaction.type === 'transferin') {
                            this.categoryAmountLeft[category.name] += transaction.amount;
                            this.totalBalancePeriod += transaction.amount;
                            this.totalBalanceEnd += transaction.amount;
                            this.categoryAmountTotal[category.name] += transaction.type == 'credit' ? transaction.amount : 0;
-                           this.totalIncome += transaction.type == 'credit' ? transaction.amount : 0;
-                           this.totalTransfer += transaction.type == 'transferin' ? transaction.amount : 0;
+                           this.totalIncome += transaction.type === 'credit' ? transaction.amount : 0;
+                           this.totalTransfer += transaction.type === 'transferin' ? transaction.amount : 0;
                        }
 
-                   })
+                   });
 
                    this.loadBudgetTrack--;
                    this.ss.setBudgetLoad();
 
-               })
+               });
 
-           })
-       })
+           });
+       });
 
    }
 
@@ -310,11 +310,11 @@ export class DashboardBudgetComponent implements OnInit {
     }
 
     formatAmount(type): string{
-      if (type == 'debit'){
+      if (type === 'debit'){
           return 'red';
-      }else if (type == 'credit'){
+      }else if (type === 'credit'){
           return 'blue';
-      }else if (type == 'transferin' || type == 'transferout'){
+      }else if (type === 'transferin' || type === 'transferout'){
           return 'green';
       }else {
           return 'black';
@@ -324,9 +324,9 @@ export class DashboardBudgetComponent implements OnInit {
 
     formatTransfer(type: string): SafeHtml{
         if (type == 'transferin'){
-            return this.sanitizer.bypassSecurityTrustHtml("<ion-icon name='arrow-down'></ion-icon>");
+            return this.sanitizer.bypassSecurityTrustHtml('<ion-icon name="arrow-down"></ion-icon>');
         }else if (type == 'transferout'){
-            return "<ion-icon name='arrow-up'></ion-icon>";
+            return '<ion-icon name="arrow-up"></ion-icon>';
         }else
             return '';
 
@@ -385,7 +385,7 @@ export class DashboardBudgetComponent implements OnInit {
     }
 
     formatOptionDefault(optionName: string, optionDefaultName: string): string{
-        return optionName=='-' ? optionDefaultName : optionName;
+        return optionName == '-' ? optionDefaultName : optionName;
     }
 
     clickEdit(transactionId){
@@ -406,7 +406,7 @@ export class DashboardBudgetComponent implements OnInit {
 
                 $('.scrollable-container').scrollTop(0);
 
-            })
+            });
 
     }
 
@@ -450,28 +450,28 @@ export class DashboardBudgetComponent implements OnInit {
 
     clickSaveTransaction(){
       this.saveTransaction = true;
-        let formValues = this.formAdd.value;
+        const formValues = this.formAdd.value;
         console.log('saveing form value', formValues);
 
         if (!this.formAdd.valid) {
             return;
         }
 
-        if (formValues.transaction_id != ""){
+        if (formValues.transaction_id != ''){
             this.transactionService.saveTransaction(this.formAdd.value).subscribe(result => {
                 this.getBudget(this.filterBudgetMonthId);
                 this.formAdd.reset(this.formInitValues);
                 this.saveTransaction = false;
                 this.isEditing = false;
 
-            })
+            });
 
         }else{
             this.transactionService.addTransaction(this.formAdd.value).subscribe(result => {
                 this.getBudget(this.filterBudgetMonthId);
                 this.formAdd.reset(this.formInitValues);
                 this.saveTransaction = false;
-            })
+            });
 
         }
 
