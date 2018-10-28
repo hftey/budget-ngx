@@ -1,0 +1,198 @@
+<div id="idTop"></div>
+<div class="row">
+  <div class="col-md-12 col-lg-12">
+    <nb-card class="inline-form-card">
+      <nb-card-body>
+      <nb-tabset>
+        <nb-tab tabTitle="Search" active="{{activeTabSearch}}" style="padding: 10px;">
+              <form class="form-inline" #formSearch>
+                <div class="col-sm-3 input-group">
+                  <select class="form-control" (change)="changeBudgetMonth($event.target.value)">
+                    <option *ngFor="let item of budgetMonthList" value="{{item.id}}">{{item.month | formatMonthPipe}} - {{item.year}}</option>
+                  </select>
+                </div>
+                <div class="col-sm-3 input-group">
+                  <input type="text" class="form-control" placeholder="Payee/Description" (keyup)='changeDesc($event)' name="filterDesc" [(ngModel)]="filterDesc">
+                </div>
+                <div class="col-sm-3 input-group">
+                  <select class="form-control" (change)="changeType($event.target.value)"  name="filterBudgetType" [(ngModel)]="filterBudgetType">
+                    <option *ngFor="let item of budgetTypeList" value="{{item.type}}">{{item.name}}</option>
+                  </select>
+                </div>
+                <div class="col-sm-3 input-group">
+                  <button type="button" class="btn btn-primary" (click)="clickClear()">Clear</button>
+                </div>
+              </form>
+        </nb-tab>
+        <nb-tab tabTitle="Add Transaction" active="{{activeTabAdd}}" style="padding: 10px;">
+          <form class="form-inline" [formGroup]="formAdd" (ngSubmit)="clickSaveTransaction()">
+
+            <div class="col-md-3 input-group align-text-top">
+              <input class="form-control" [ngClass]="{ 'form-control-danger': saveTransaction && f.date.errors }" placeholder="Date" [nbDatepicker]="datepicker" formControlName="date">
+              <nb-datepicker #datepicker  [min]="dateMin" [max]="dateMax"></nb-datepicker>
+              <div *ngIf="saveTransaction && f.date.errors" class="alert alert-warning">
+                <div *ngIf="f.date.errors.required" class="alert-warning">Date is required</div>
+              </div>
+            </div>
+            <div class="col-md-3 input-group">
+              <input type="text" class="form-control"  [ngClass]="{ 'form-control-danger': saveTransaction && f.payee.errors }" placeholder="Payee" name="payee" formControlName="payee">
+              <div *ngIf="saveTransaction && f.payee.errors" class="alert alert-warning">
+                <div *ngIf="f.payee.errors.required" class="alert-warning">Payee is required</div>
+              </div>
+            </div>
+            <div class="col-md-6 input-group">
+              <input type="text" class="form-control" placeholder="Description" name="desc" formControlName="desc">
+            </div>
+
+            <div class="col-md-3 input-group">
+              <input type="text" class="form-control"  [ngClass]="{ 'form-control-danger': saveTransaction && f.amount.errors }" placeholder="Amount" name="amount" formControlName="amount">
+              <div *ngIf="saveTransaction && f.amount.errors" class="alert alert-warning">
+                <div *ngIf="f.amount.errors.required" class="alert-warning">Amount is required</div>
+              </div>
+            </div>
+            <div class="col-md-3 input-group">
+              <select class="form-control" [ngClass]="{ 'form-control-danger': saveTransaction && f.type.errors }" placeholder="Type" name="type" formControlName="type">
+                <option *ngFor="let item of budgetTypeList" value="{{item.type}}">{{formatOptionDefault(item.name, '--Select type--')}}</option>
+              </select>
+              <div *ngIf="saveTransaction && f.type.errors" class="alert alert-warning">
+                <div *ngIf="f.type.errors.required" class="alert-warning">Type is required</div>
+              </div>
+            </div>
+            <div class="col-md-6 input-group">
+              <label *ngIf="f.type.value=='transferout'">Transaction Type</label>
+              <select *ngIf="f.type.value=='transferout'" class="form-control" name="addCategoryTransferTo" formControlName="addCategoryTransferTo">
+                <option *ngFor="let item of categoryList" value="{{item.id}}">{{formatOptionDefault(item.name, '--Select category transfer to--')}}</option>
+              </select>
+            </div>
+
+            <div class="col-md-3 input-group">
+              <select class="form-control"  [ngClass]="{ 'form-control-danger': saveTransaction && f.category_id.errors }" name="category_id" formControlName="category_id">
+                <option value="">--Select category--</option>
+                <option *ngFor="let item of categoryList" value="{{item.id}}">{{item.name}}</option>
+              </select>
+              <div *ngIf="saveTransaction && f.category_id.errors" class="alert alert-warning">
+                <div *ngIf="f.category_id.errors.required" class="alert-warning">Category is required</div>
+              </div>
+            </div>
+            <div class="col-md-3 input-group">
+              <button type="submit" nbButton class="btn-xsmall">Save Transaction</button>
+              <button type="button" nbButton class="btn-xsmall" *ngIf="isEditing" (click)="clickCancel()">Cancel</button>
+              <input type="hidden" name="user_id" formControlName="user_id">
+              <input type="hidden" name="budget_month_id" formControlName="budget_month_id">
+              <input type="hidden" name="transaction_id" formControlName="transaction_id">
+            </div>
+            <div class="col-md-6 input-group">
+
+            </div>
+
+          </form>
+        </nb-tab>
+      </nb-tabset>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<div style="padding-left:5px; display: inline-block; width: 100%">
+  <div style="display: inline-block; float: right; margin-right: 15px">
+    <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Balance (Beginning): </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatBalanceStart() | formatAmount"></div></div>
+    <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;"> </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="0 | formatAmount"></div></div>
+    <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Balance (Period): </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatBalancePeriod() | formatAmount"></div></div>
+    <div style="text-align: right; border-top: solid 1px silver;"><div style="display: inline-block; margin-right: 25px;">Balance (Current): </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatBalanceEnd() | formatAmount"></div></div>
+  </div>
+  <div style="display: inline-block; float: right; margin-right: 15px">
+    <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Total Income: </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatTotalIncome() | formatAmount"></div></div>
+    <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Total Spending: </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatTotalSpending() | formatAmount"></div></div>
+    <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Total Transfer: </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatTotalTransfer() | formatAmount"></div></div>
+    <div style="text-align: right; border-top: solid 1px silver;"><div style="display: inline-block; margin-right: 25px;">Total Balance: </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatTotalBalance() | formatAmount"></div></div>
+  </div>
+  <div style="display: inline-block; float: left; margin-right: 5px">
+    <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Total Meals: </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatTotalMeals() | formatAmount"></div></div>
+    <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Total Groceries:  </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatTotalGroceries() | formatAmount"></div></div>
+    <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Total Gas: </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatTotalGas() | formatAmount"></div></div>
+    <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Total Toll: </div><div style="text-align: right; display: inline-block; width: 85px" [innerHTML]="formatTotalToll() | formatAmount"></div></div>
+  </div>
+</div>
+
+<ngx-datatable
+        #budgetTable
+        class="bootstrap expandable"
+        [rows]="rows"
+        [groupRowsBy]="'category_id'"
+        [loadingIndicator]="loadingIndicator"
+        [columnMode]="'force'"
+        [headerHeight]="50"
+        [footerHeight]="50"
+        [rowHeight]="'auto'"
+        [reorderable]="reorderable"
+        [groupExpansionDefault]="true">
+
+  <ngx-datatable-group-header [rowHeight]="50" #myGroupHeader (toggle)="onDetailToggle($event)">
+    <ng-template let-group="group" let-expanded="expanded" ngx-datatable-group-header-template>
+      <div style="padding-left:5px; display: inline-block;">
+        <a
+                href="/pages/dashboard-budget#"
+                [class.datatable-icon-right]="!expanded"
+                [class.datatable-icon-down]="expanded"
+                title="Expand/Collapse Group"
+                (click)="toggleExpandGroup(group)">
+          {{group.value[0].category.name}}
+        </a>
+      </div>
+      <div style="display: inline-block; float: right; margin-right: 20%" >
+        <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Balance (Current): </div><div style="text-align: right; display: inline-block; width: 75px" [innerHTML]="formatAmountLeft(group.value[0].category.name) | formatAmount"></div></div>
+        <div style="text-align: right;"><div style="display: inline-block; margin-right: 25px;">Balance (Period): </div><div style="text-align: right; display: inline-block; width: 75px" [innerHTML]="formatAmountTotal(group.value[0].category.name) | formatAmount"></div></div>
+      </div>
+
+    </ng-template>
+  </ngx-datatable-group-header>
+
+
+  <ngx-datatable-column name="Payee" prop="payee"></ngx-datatable-column>
+  <ngx-datatable-column name="Description" prop="desc"></ngx-datatable-column>
+  <ngx-datatable-column name="Date" prop="date" >
+
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row"
+                 let-group="group" let-rowHeight="rowHeight">
+      {{value | formatDatePipe}}
+
+    </ng-template>
+
+
+  </ngx-datatable-column>
+  <ngx-datatable-column name="Amount" prop="amount" >
+    <ng-template let-column="column" ngx-datatable-header-template>
+      <div style="text-align: right; width:100%">Amount</div>
+    </ng-template>
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row" let-group="group" let-rowHeight="rowHeight">
+      <div style="text-align: right; width:100%;" [ngStyle]="{color: formatAmount(row.type)}">
+        <div style="display: inline-block" [innerHTML]="row.type | formatTypeIcon"></div> $ {{value | number:'1.2'}}</div>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="" prop="id">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row" let-group="group" let-rowHeight="rowHeight">
+      <div style="text-align: right; width:100%;">
+
+        <button nbButton class="btn-xsmall" size="small" (click)="clickEdit(value)">Edit</button>
+        <button nbButton class="btn-xsmall" size="small" status="danger" (click)="clickDelete(value)" >Delete</button>
+
+      </div>
+    </ng-template>
+
+  </ngx-datatable-column>
+
+
+  <ngx-datatable-footer>
+    <ng-template
+            ngx-datatable-footer-template
+            let-rowCount="rowCount"
+            let-pageSize="pageSize"
+            let-selectedCount="selectedCount"
+            let-curPage="curPage"
+            let-offset="offset">
+
+    </ng-template>
+  </ngx-datatable-footer>
+
+</ngx-datatable>
