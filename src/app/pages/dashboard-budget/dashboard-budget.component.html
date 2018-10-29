@@ -125,7 +125,7 @@
         [footerHeight]="50"
         [rowHeight]="'auto'"
         [reorderable]="reorderable"
-        [groupExpansionDefault]="true">
+        [groupExpansionDefault]="false">
 
   <ngx-datatable-group-header [rowHeight]="50" #myGroupHeader (toggle)="onDetailToggle($event)">
     <ng-template let-group="group" let-expanded="expanded" ngx-datatable-group-header-template>
