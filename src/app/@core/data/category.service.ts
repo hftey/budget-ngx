@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Category } from './models/category.models';
+import { environment } from '../../../environments/environment';
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -12,7 +13,10 @@ const httpOptions = {
 })
 export class CategoryService {
 //  private apiUrl = 'http://192.168.0.199:8080/api/budget-month';  // URL to web api
-    private apiUrl = 'http://budget-server.venzon-solution.com:8081/api';  // URL to web api
+    //private apiUrl = 'http://budget-server.venzon-solution.com:8081/api';  // URL to web api
+    private apiUrl = environment.baseUrl;  // URL to web api
+
+
     constructor(
         private http: HttpClient
     ) { }

@@ -5,4 +5,5 @@
  */
 export const environment = {
   production: true,
+  baseUrl: 'http://budget-server.venzon-solution.com:8081/api'
 };
