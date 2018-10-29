@@ -12,7 +12,7 @@ const httpOptions = {
 })
 export class BudgetmonthService {
 //  private apiUrl = 'http://192.168.0.199:8080/api/budget-month';  // URL to web api
-    private apiUrl = 'http://192.168.0.199:8080/api';  // URL to web api
+    private apiUrl = 'http://budget-server.venzon-solution.com:8081/api';  // URL to web api
     constructor(
     private http: HttpClient
   ) { }
