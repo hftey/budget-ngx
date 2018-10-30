@@ -59,7 +59,7 @@
               </div>
             </div>
             <div class="col-md-6 input-group">
-              <label *ngIf="f.type.value=='transferout'">Transaction Type</label>
+              <label *ngIf="f.type.value=='transferout'">Transfer Out To:</label>
               <select *ngIf="f.type.value=='transferout'" class="form-control" name="addCategoryTransferTo" formControlName="addCategoryTransferTo">
                 <option *ngFor="let item of categoryList" value="{{item.id}}">{{formatOptionDefault(item.name, '--Select category transfer to--')}}</option>
               </select>

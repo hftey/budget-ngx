@@ -231,6 +231,12 @@ export class DashboardBudgetComponent implements OnInit {
     }
 
     changeBudgetMonth(budgetMonthID){
+
+        this.filterBudgetMonthId = budgetMonthID;
+        this.getBudget(budgetMonthID);
+    }
+
+    initTotal(){
         this.totalSpending = 0;
         this.totalTransfer = 0;
         this.totalIncome = 0;
@@ -241,13 +247,12 @@ export class DashboardBudgetComponent implements OnInit {
         this.totalBalanceStart = 0;
         this.totalBalancePeriod = 0;
         this.totalBalanceEnd = 0;
-        this.filterBudgetMonthId = budgetMonthID;
-        this.getBudget(budgetMonthID);
     }
 
 
     getBudget(budgetMonthID){
        this.rows = [];
+       this.initTotal();
        this.formAdd.controls['budget_month_id'].setValue(budgetMonthID);
        this.formInitValues.budget_month_id = budgetMonthID;
        this.budgetMonthService.getBudgetMonth(budgetMonthID)
